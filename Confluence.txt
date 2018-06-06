@@ -1,0 +1,144 @@
+Confluence Page Login:-
+__________________________________
+
+//import java.util.Properties;
+//import java.io.BufferedReader;
+//import java.io.InputStreamReader;
+//import java.util.*;
+import java.util.*;
+//import org.apache.http.NameValuePair.*;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+//import org.openqa.selenium.support.ui.ExpectedConditions;
+//import org.openqa.selenium.support.ui.ExpectedConditions;
+//import org.openqa.selenium.support.ui.WebDriverWait;
+//import java.util.Properties;
+//import java.io.FileInputStream;
+//import org.openqa.selenium.remote.RemoteWebDriver;
+
+public class confluence {
+
+
+	public static void main(String[] args) throws Exception
+	{
+		
+		System.setProperty("webdriver.chrome.driver", "D:\\Abhik\\eclipse\\chromedriver_win32\\chromedriver.exe");        
+		WebDriver driver = new ChromeDriver();
+//launch the Chrome browser and open the application url
+		driver.get("https://confluence.simplivt.local:8443/");
+		driver.manage().window().maximize();
+		WebElement uname = driver.findElement(By.name("os_username"));
+  uname.sendKeys("anag");
+  driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+   WebElement pwd=driver.findElement(By.className("password"));
+  pwd.sendKeys("1ma<pa55w0rd");
+driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+ driver.findElement(By.name("login")).click();
+  Thread.sleep(5000);
+ WebElement txtbox = driver.findElement(By.id("quick-search-query"));
+ txtbox.sendKeys("Core QA");
+ Thread.sleep(1000);
+ WebElement menu = driver.findElement(By.xpath("//*[@id='quick-search']/fieldset/div/div/ol[1]/li[1]/a[1]/span/em"));
+ Actions builder = new Actions(driver); 
+ builder.moveToElement(menu).build().perform();
+
+//identify menu option from the resulting menu display and click
+WebElement menuOption = driver.findElement(By.xpath("//*[@id='quick-search']/fieldset/div/div/ol[1]/li[1]/a[2]"));
+menuOption.click();
+
+WebElement bttn = driver.findElement(By.id("editPageLink"));
+bttn.click();
+WebElement txt = driver.findElement(By.xpath("//*[@id='CoreQA-OptimusPrime']/strong"));
+Actions action = new Actions(driver);
+action.moveToElement(txt).perform();
+
+
+//WebElement table = driver.findElement(By.xpath("//*[@id='main-content']/div/div[20]/div/div/div[1]/table/tbody/tr[3]/td[3]/div/div[1]/table")); 
+	
+//List<WebElement> iRows = table.findElements(By.tagName("tr"));
+		//int iRowCount = iRows.size();
+		
+		//List<WebElement> iColumn = driver.findElements(By.xpath(".//*[@id='main-content']/div/div[20]/div/div/div[1]/table/tbody/tr[3]/td[3]/div/div[1]/table/thead/tr/th"));
+
+JavascriptExecutor jse = (JavascriptExecutor)driver;
+jse.executeScript("window.scrollBy(0,500)", "");
+		WebElement confTable=driver.findElement(By.xpath("//*[@id='main-content']/div/div[20]/div/div/div/table/tbody/tr[3]/td[3]/div/div[1]/table"));
+		
+		List<WebElement> rows =confTable.findElements(By.tagName("tr"));
+		int iRowCount=rows.size();
+		List<WebElement> cols =confTable.findElements(By.tagName("th"));
+		int iColumn=cols.size();
+		System.out.println("-------------------------------------------------- ");
+		System.out.println("**Table Row & Column Counts**");
+		System.out.println("Total number of Rows = " + iRowCount);
+	//int iCol = iColumn.size();
+	System.out.println("Total number of columns = " + iColumn);
+	System.out.println("-------------------------------------------------- ");
+	System.out.println("**Table Header Contents**");
+	for (int row=1; row<=iRowCount; row++)
+    { 
+	for (int column=0; column<iColumn; column++){ 
+    	// To retrieve text from that specific cell.
+    	//List<WebElement> iCell=driver.findElements(By.cssSelector("td.colspan"));
+		
+    	String celtext =cols.get(column).getText();
+    	
+	System.out.println("-------------------------------------------------- ");
+	System.out.println("** Table Data**");
+	System.out.println("Cell Value of row number "+row+" and column number "+column+" Is: "+celtext);
+	//row2.click();
+	if(row==2){
+		//WebDriverWait wait = new WebDriverWait(driver, 50);
+		//wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt("tinymce"));
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("tinymce")));
+		WebElement row2=driver.findElement(By.xpath("//*[@id='main-content']/div/div[20]/div/div/table/tbody/tr[3]/td[3]/div/table/tbody/tr[2]"));
+		row2.click();
+		//cols.get(column).clear();
+		//cols.get(column).sendKeys("ABC");
+	}
+	}
+    }
+	}
+}
+
+	
+	    	//To locate columns(cells) of that specific row.
+	    	//List<WebElement> iColumns = driver.findElements(By.xpath("//*[@id='main-content']/div/div[20]/div/div/div[1]/table/tbody/tr[3]/td[3]/div/div[1]/table/tbody/tr/td"));
+	    	  //  	int iColCount = iColumns.size();
+	        //System.out.println("Total number of Rows = " + iRowCount);
+	        //System.out.println("Total number of columns = " + iColCount);
+	       // for (int column=0; column<iColCount; column++){ 
+	        	// To retrieve text from that specific cell.
+	        	//List<WebElement> iCell=driver.findElements(By.cssSelector("td.colspan"));
+	        	
+	        	//
+	        	
+	        	/*Actions actions = new Actions(driver);
+	        	actions.moveToElement(iColumns.get(column));
+	        	actions.click();
+	        	iColumns.get(column).clear();
+	        	actions.sendKeys("SOME DATA");
+	        	actions.build().perform();*/
+	        	//@SuppressWarnings("resource")
+				//Scanner scan1 = new Scanner(System.in);
+	        	//String input1 = scan1.nextLine();
+	        	//String celtext1 = input1;
+	        	//System.out.println(celtext1);
+	        	
+	        	 //WebElement desiredCell = iColumns.get(column);
+	        	 //System.out.println("cell"+desiredCell);
+	        	  //desiredCell.sendKeys(input1);
+	        	
+
+
+		/*String updateCell (int romNumber;int columnNumber;String value) 
+		{ 
+			WebElement table1 = driver.findElement(By.xpath("//*[@id='main-content']/div/div[20]/div/div/div[1]/table/tbody/tr[3]/td[3]/div/div[1]/table")); 
+			List<WebElement> rows = table1.findElements(By.tagName("tr"));
+			List<WebElement> cells = rows.get(romNumber).findElements(By.tagName("td")); 
+			WebElement desiredCell = cells.get(columnNumber); 
+			desiredCell.setText(value); */

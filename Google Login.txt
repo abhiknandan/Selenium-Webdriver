@@ -1,0 +1,36 @@
+Login to Google & Search "Selenium"
+______________________________________________
+
+package org.openqa.selenium;
+import static org.junit.Assert.*;
+
+import org.junit.After; 
+import org.junit.Before; 
+import org.junit.Test; 
+import org.openqa.selenium.By; 
+import org.openqa.selenium.WebDriver; 
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class FirstTest {
+	private WebDriver _driver;
+	@Before
+	 public void setUp() throws Exception {
+		System.setProperty("webdriver.chrome.driver","D:\\Abhik\\eclipse\\chromedriver_win32\\chromedriver.exe");
+		_driver= new ChromeDriver();
+	}
+
+	@Test 
+	public void Login() throws Exception {
+	_driver.get("https://www.google.co.in/");
+	assertEquals("Google", _driver.getTitle());
+	_driver.findElement(By.id("lst-ib")).clear();
+	_driver.findElement(By.id("lst-ib")).sendKeys("selenium");
+	_driver.findElement(By.name("btnK")).click();
+	_driver.findElement(By.linkText("Selenium - Web Browser Automation")).click();
+	assertEquals("Selenium - Web Browser Automation", _driver.getTitle());
+	}
+	@After 
+	public void tearDown() throws Exception {
+	_driver.quit();
+	}
+}
