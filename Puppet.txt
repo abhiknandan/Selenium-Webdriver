@@ -1,0 +1,541 @@
+Puppet
+10.207.194.61 - Client -vm3-virtual-machine
+
+
+10.207.194.67 - Master - puppetmaster
+2	VM6	10.207.194.67	 vm6	 a
+3	VM3	10.207.194.61 	 VM3	a
+
+
+VM3	10.207.194.61 	 VM3	a  - Client
+VM6	10.207.194.67	 vm6	a  - puppetmaster
+
+
+
+puppet cert sign vm3-virtual-machine
+
+puppet cert sign puppet.lhn.com
+
+puppet cert clean vm3-virtual-machine.lhn.com
+
+puppet cert --generate vm3-virtual-machine.lhn.com
+
+
+
+10.207.194.61 vm3-virtual-machine.lhn.com
+10.207.194.60 bpblab.lhn.com
+
+
+
+bpblab.lhn.com
+
+svtrfs29LAB
+
+Infrastructure Mangament Platform
+
+Uninstall puppetmaster
+To remove just puppetmaster package itself from Ubuntu 14.04 (Trusty Tahr) execute on terminal:
+
+sudo apt-get remove puppetmaster
+
+Uninstall puppetmaster and it's dependent packages
+To remove the puppetmaster package and any other dependant package which are no longer needed from Ubuntu Trusty.
+
+sudo apt-get remove --auto-remove puppetmaster
+
+Purging puppetmaster
+If you also want to delete configuration and/or data files of puppetmaster from Ubuntu Trusty then this will work:
+
+sudo apt-get purge puppetmaster
+
+To delete configuration and/or data files of puppetmaster and it's dependencies from Ubuntu Trusty then execute:
+
+sudo apt-get purge --auto-remove puppetmaster
+
+
+
+git clone git+ssh://bpblab@10.207.194.60:22/opt/GITREPOS/git_repo_BnR_docs.git  
+password is "a" 
+
+
+
+
+
+$puppet module search tomcat  -> Searching for Tomcat Module]
+$puppet module install camptocamp-tomcat  -> Downloading & Installing Tomcat  (Before that add the class tomcat in site.pp file)
+$puppet module list -> Listing of installed packages in Puppet master
+$puppet module uninstall puppetlabs-tomcat -> To Uninstall modules in Master
+
+
+
+
+
+
+Puppet certificate Management :
+===============================
+1. List all agent certificates : 
+$puppet cert list --all
+
+2.  List individual agent certificate
+ $puppet cert list client2 
+
+3. See whole certificate
+$puppet cert print client2
+
+4. List unsigned certificates
+ $puppet cert list
+
+5.Sign the certificate
+ $puppet cert sign client2
+
+7. Remove the agents certificate
+$puppet cert clean client2
+
+8. Revoke the agent's certificate
+$puppet cert revoke client2
+
+===============================
+
+9)$puppet describe file (syntax of file and what variables to add)
+
+10)full list of available descriptions:
+$puppet describe --list
+
+11)puppet resource to interrogate the RAL
+	$puppet resource user
+
+	$puppet resource user root
+
+	$puppet resource package
+
+	$puppet resource service
+Or to directly modify resources:
+	$puppet resource service httpd ensure=running enable=true
+
+
+
+
+
+
+
+_________________________
+
+node default{
+$packages = ['vim', 'git', 'curl']
+exec { "apt-update":
+    command => "/usr/bin/apt-get update"
+}
+package { $packages:
+   ensure => "installed",
+  install_options => ['--allow-unauthenticated', '-f'],
+}
+file { 'TEST':
+ path    => '/tmp/TEST',
+  content => 'Tomorrow is another day',
+}
+}
+==========================================================
+Scenario 5: (removing installad packages)
+========
+node "vm3-virtual-machine" {
+$packages = ['vim', 'git', 'curl']
+exec { "apt-update":
+    command => "/usr/bin/apt-get update"
+}
+package { $packages:
+   ensure => "purged",
+#  install_options => ['--allow-unauthenticated', '-f'],
+}
+file { 'TEST':
+ path    => '/tmp/TEST',
+  content => 'Tomorrow is another day',
+ ensure => "absent"
+}
+}
+=============================================
+
+
+
+
+
+Removing an application:-
+
+sudo apt-get purge --auto-remove git
+
+
+
+java installation on Ubuntu
+============================
+
+1)apt-get install default-jdk (its openjdk7)
+	(or)
+
+=>before going to install java8&9 need to follow below command
+
+$sudo apt-add-repository ppa:webupd8team/java
+
+$apt-get install oracle-java9-installer (jdk9)
+	(or)
+$apt-get install oracle-java8-installer
+
+checking java version: $java -version
+
+=>make sure you update the path with the one you previously copied, example
+
+  1)JAVA_HOME="/usr/lib/jvm/java-9-oracle"
+  2)Save the file and then reload it: source /etc/environment
+  3)echo $JAVA_HOME
+
+/etc/manifest/site.pp
+=====================# default.pp - basically translating the four lines below in Puppet.
+
+# $ sudo apt-get install build-essential python-software-properties
+# $ sudo add-apt-repository ppa:webupd8team/java
+# $ sudo apt-get update
+# $ sudo apt-get install oracle-java7-installer
+
+package {
+    'build-essential':
+        ensure => installed;
+    'python-software-properties':
+        ensure => installed;
+} ->
+exec { 'add-webupd8-repo':
+    command => 'sudo add-apt-repository ppa:webupd8team/java',
+    path => [ '/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/' ];
+} ->
+exec { 'apt-update':
+    command => 'sudo apt-get update',
+    path => [ '/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/' ];
+} ->
+exec {
+    'set-licence-selected':
+        command => 'echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections',
+        path => [ '/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/' ];
+    'set-licence-seen':
+        command => 'echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections',
+        path => [ '/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/' ];
+} ->
+package { 'oracle-java7-installer':
+    ensure => present;
+}
+
+______________________________________________________________________________________________________
+
+Installing Apache,PHP,My-SQL (LAMP)   in Module/init.pp
+
+class apache {
+
+#execute ‘apt-get update’
+
+exec { 'apt-update' :
+
+command => '/usr/bin/apt-get update',
+
+before => Package['apache2'],
+
+}
+
+#install apache2 package
+
+package { 'apache2' :
+install_options => ['--allow-unauthenticated', '-f'],
+ensure => latest,
+
+require => exec['apt-update'],
+
+}
+
+#ensure apache2 service is running
+
+service { 'apache2' :
+
+ensure => running,
+
+require => Package['apache2'],
+
+}
+
+#install mysql-server package
+
+package { 'mysql-server' :
+install_options => ['--allow-unauthenticated', '-f'],
+
+ensure => latest,
+
+require => exec['apt-update'],
+}
+
+#ensure mysql service is running
+
+service { 'mysql' :
+
+ensure => running,
+
+require => Package['mysql-server'],
+
+}
+
+# install php5 package
+
+package { 'php5' :
+
+ensure => latest,
+
+require => exec['apt-update'],
+}
+
+file { '/var/www/html/info.php':
+
+ensure => file,
+
+content => '<?php phpinfo(); ?>',
+
+require => Package['apache2'],
+
+}
+}
+
+
+In site.pp
+
+node "vm3-virtual-machine" {
+include  apache  #include <Module_Name>
+}
+
+
+Installing java 8 manually:-
+
+________________________________________
+java8/files/java-jdk8_install.sh :-
+
+#!/bin/bash
+
+#/bin/rpm -qa|grep jdk|xargs rpm -e
+
+# install jdk8 jdk7
+#/bin/rpm -ivh  http://yum.wang.com/software/jdk-8u131-linux-x64.rpm
+
+#sudo add-apt-repository ppa:webupd8team/java -y
+#sudo apt-get update
+#sudo apt-get install oracle-java8-installer
+
+
+# set env
+NUM=`cat /etc/profile|grep "JAVA_HOME"|wc -l`
+JDK=`cat /etc/profile|grep "JAVA_HOME="|cut -d"=" -f2|awk -F"/" '{print $4}'`
+if [ $NUM -ne 0 ];then
+    /bin/sed -i 's#'$JDK'#jdk1.8.0_131#g' /etc/profile
+else
+    echo "JAVA_HOME=/opt/software/jdk1.8.0_171" >> /etc/profile
+    echo "JAVA_BIN=/opt/software/jdk1.8.0_171/bin" >> /etc/profile
+    echo "PATH=/usr/lib64/qt-3.3/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin:/bin" >> /etc/profile
+    echo "CLASSPATH=.:/lib/dt.jar:/lib/tools.jar" >> /etc/profile
+    echo "export JAVA_HOME JAVA_BIN PATH CLASSPATH" >> /etc/profile
+
+fi
+
+source  /etc/profile
+_________________________________________
+
+cat java8/manifests/install.pp
+
+
+
+class java8::install {
+
+#$dir ="/opt/software"
+
+file { '/opt/software':
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+#exec { "mkdir_autostart":
+ # command => "mkdir -p $dir",
+#}
+
+  file { "/opt/software/jdk-8u171-linux-x64.tar.gz":
+    source => 'puppet:///modules/java8/jdk-8u171-linux-x64.tar.gz',
+  #ensure => 'present',
+ # recurse => 'true',
+ # purge => 'true',
+ # force => 'true',
+    owner => 'root',
+    group => 'root',
+    mode => '0755',
+    }
+
+#exec { "mkdir_autostart":
+#  command => "mkdir -p /opt/software",
+#  user => "root",
+#  group => "root",
+#}
+
+  exec { "install jdk":
+   cwd => "/opt/software",
+    command => "/bin/tar xvfz /opt/software/jdk-8u171-linux-x64.tar.gz",
+    user => "root",
+    group => "root",
+    path =>["/usr/bin:/usr/sbin:/bin:/sbin"],
+    creates =>"/opt/software/jdk-8u171",
+   require =>File["/opt/software/jdk-8u171-linux-x64.tar.gz"]
+    }
+
+ file { "/opt/software/java-jdk8_install.sh":
+    source => 'puppet:///modules/java8/java-jdk8_install.sh',
+  #ensure => 'present',
+ # recurse => 'true',
+ # purge => 'true',
+ # force => 'true',
+    owner => 'root',
+    group => 'root',
+    mode => '0755',
+    }
+
+ exec { "installing jdk":
+   cwd => "/opt/software",
+    command => "/bin/bash java-jdk8_install.sh",
+    user => "root",
+    group => "root",
+    path =>["/usr/bin:/usr/sbin:/bin:/sbin"],
+    creates =>"/opt/software/jdk-8u171",
+   require =>File["/opt/software/java-jdk8_install.sh"]
+    }
+
+  #exec {"/etc/profile":
+  #command => "/bin/bash -c 'source /etc/profile'",
+  #provider => 'shell',
+  #subscribe => File["/etc/profile"],
+ #}
+}
+_______________________________________________________________
+
+java8/manifests/init.pp
+
+class java8 {
+  include java8::install
+}
+
+
+10.207.253.44/45
+
+_________________________________________________________________
+
+Installing Tomcat:-
+
+
+install.pp
+/etc/puppet/modules/tomcat8/manifests# vim install.pp
+class tomcat8::install {
+  file { "/opt/software/apache-tomcat-8.5.15.tar.gz":
+  source =>"puppet:///modules/tomcat8/apache-tomcat-8.5.15.tar.gz",
+  owner => "root",
+  group => "root",
+  mode => 755
+  }
+
+  exec {"install tomcat":
+  cwd => "/opt/software",
+  command => "/bin/tar -zvxf apache-tomcat-8.5.15.tar.gz && mv apache-tomcat-8.5.15 /opt/tomcat",
+  user => "root",
+  group => "root",
+  path =>["/usr/bin:/usr/sbin:/bin:/sbin"],
+  creates => "/opt/tomcat",
+  require => File["/opt/software/apache-tomcat-8.5.15.tar.gz"]
+  }
+
+service { "tomcat8" :
+    provider => "init",
+    ensure => running,
+    start => "/opt/tomcat/bin/startup.sh",
+    stop => "/opt/tomcat/bin/shutdown.sh",
+    status => "",
+    #restart => "",
+    hasstatus => false,
+    hasrestart => false,
+    require => [ Exec["install tomcat"] ],
+  }
+
+}
+______________________________________________________________________
+
+init.pp
+root@puppetmaster:/etc/puppet/modules/tomcat8/manifests# cat init.pp
+class tomcat8 {
+  include tomcat8::install
+}
+__________________________________________________________
+
+site.pp
+
+node "vm3-virtual-machine"    {
+    #case $::operatingsystem {
+         include tomcat8
+         #include java8
+#     default  : { notify {"$::operatingsystem is not supported yet":} }
+    }
+____________________________________________________________
+
+
+Jenkins Installation :-
+
+class tomcat8::install {
+  file { "/opt/software/apache-tomcat-8.5.15.tar.gz":
+  source =>"puppet:///modules/tomcat8/apache-tomcat-8.5.15.tar.gz",
+  owner => "root",
+  group => "root",
+  mode => 755
+  }
+
+  exec {"install tomcat":
+  cwd => "/opt/software",
+  command => "/bin/tar -zvxf apache-tomcat-8.5.15.tar.gz && mv apache-tomcat-8.5.15 /opt/tomcat",
+  user => "root",
+  group => "root",
+  path =>["/usr/bin:/usr/sbin:/bin:/sbin"],
+  creates => "/opt/tomcat",
+  require => File["/opt/software/apache-tomcat-8.5.15.tar.gz"]
+  }
+
+  file { "/opt/software/jenkins.war":
+  source =>"puppet:///modules/tomcat8/jenkins.war",
+  owner => "root",
+  group => "root",
+  mode => 755
+  }
+
+
+  exec {"install jenkins":
+  cwd => "/opt/software",
+  command => "/bin/cp /opt/software/jenkins.war /opt/tomcat/webapps/",
+  user => "root",
+  group => "root",
+  require => File["/opt/software/jenkins.war"]
+  }
+
+#exec {
+   # 'stop-tomcat':
+     #   command => "/opt/tomcat/bin/shutdown.sh",
+
+#}
+service { "tomcat8" :
+    provider => "init",
+    ensure => running,
+    start => "/opt/tomcat/bin/startup.sh",
+    stop => "/opt/tomcat/bin/shutdown.sh",
+    status => "",
+    #restart => "",
+    hasstatus => false,
+    hasrestart => false,
+    require => [ Exec["install tomcat"] ],
+  }
+
+
+}
+===============================================
+exec: To execute commands, such as apt-get
+package: To install packages via apt
+service: To ensure that a service is running
+file: To ensure that certain files exist

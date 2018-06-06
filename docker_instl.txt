@@ -1,0 +1,19 @@
+1)sudo apt-get update
+2) sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+3) curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+4)sudo add-apt-repository  "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+5)sudo apt-get update
+6)sudo apt-get install docker-ce
+7)sudo docker run hello-world
+
+issue1:
+======
+I had the same error when I was running docker pull hello-world
+
+root@someubuntumc:~# docker pull hello-world
+Using default tag: latest
+Error response from daemon: Get https://registry-1.docker.io/v2/: dial tcp: lookup registry-1.docker.io on 127.0.1.1:53: no such host
+I then realized that I did not configure proxy in the docker config file. Add these details to your docker config (depending on your os), I am using ubuntu so the file is - /etc/default/docker/
+
+export http_proxy="http://user:pwd@proxyurl.com:port"
+export https_proxy="https://user:pwd@proxy-url.com:port"

@@ -1,0 +1,175 @@
+Step 1) --> install java 8 on ubuntu 16.04.
+	
+1.1) Type "sudo apt-get update" in terminal	
+	
+1.1) Type  "sudo add-apt-repository ppa:webupd8team/java" in terminal
+	
+1.2) Type "sudo apt-get update" in terminal	
+	
+1.3) Type "sudo apt-get install oracle-java8-installer" in terminal
+	
+1.4) Type "sudo apt-get install oracle-java8-set-default" in terminal
+	
+1.5) Type "javac -version" to check is installed or not ?
+		
+
+Step 2) ---> install jenkins on ubuntu 16.04	
+	
+	
+Type step wise command in terminal	
+	
+2.1) "wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | sudo apt-key add -"
+	------> return OK
+	
+2.2) "echo deb https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list"
+	------> should not return anything
+
+
+	
+2.3) "sudo apt-get update"
+	
+2.4) "sudo apt-get install jenkins"
+	
+2.5) "sudo systemctl start jenkins"
+ / sudo service jenkins restart	
+2.6) "sudo systemctl status jenkins"
+  sudo service jenkins status	
+2.7) "sudo ufw allow 8080"
+	
+2.8) "sudo ufw status"
+	-----> return Status: active
+inactive
+
+	
+Note: If the firewall is inactive, the following commands will make sure that OpenSSH is allowed and then enable it.
+	
+	
+2.9) "sudo ufw allow OpenSSH"
+
+Couldnot find a profile matching openSSH	
+2.10) "sudo ufw enable"
+
+Step 
+3) Browser setup.
+
+	
+3.1) go to chrome browser and type "localhost:8080" (localhost if VM is in your local machine)
+	
+3.2) Type "sudo cat /var/lib/jenkins/secrets/initialAdminPassword" in terminal
+	
+3.3) copy that password and paste in browser
+	
+3.4) select install suggested plugins
+	
+3.5) create user.
+	
+3.6) getting started.
+
+_____________________________________
+
+Maven Installation:-
+1.apt-get install maven2
+2.apt-get update
+3.check version:- mvn --version
+4.find / -name maven2
+5.Search settings.xml
+find / -name settings.xml
+Maven Issue:- ([WARNING] repository metadata for: 'org.apache.maven.plugins' could not be retrieved  from repository: central due to an error: Error transferring file: repository.exoplatform.org)
+
+vim /etc/maven2/settings.xml
+
+
+<proxies>
+    <proxy>
+      <id>optional</id>
+      <active>true</active>
+      <protocol>http</protocol>
+      <username>username</username>
+      <password>password</password>
+      <host>arlproxy1.igate.com</host>
+      <port>8080</port>
+      <nonProxyHosts>local.net|some.host.com</nonProxyHosts>
+    </proxy>
+  </proxies>
+	
+
+
+Ansible installation on ubuntu:-
+$ sudo apt-get install software-properties-common
+$ sudo apt-add-repository ppa:ansible/ansible
+$ sudo apt-get update
+$ sudo apt-get install ansible 
+
+
+setting proxy:-
+http_proxy='http://10.207.190.104:808/'	
+
+
+checking proxy:-
+echo $http_proxy
+
+wget www.gmail.com
+
+
+Removing jdk
+sudo apt-get autoremove openjdk
+
+
+wget http://www-eu.apache.org/dist/maven/maven-3/3.5.3/source/apache-maven-3.5.3-src.tar.gz
+
+
+which mvn
+mvn --version
+
+
+For Puppet Installation:-
+https://www.howtoforge.com/puppet-ubuntu-14.04
+
+Puppet Enterprise
+
+https://puppet.com/docs/pe/2017.3/quick_start_guides/install_pe_getting_started.html
+
+
+
+Docker:-
+
+Installing Docker:-
+Pre-install steps:
+1.$ sudo apt-get update [Update the apt package index]
+2.sudo apt-get install apt-transport-https ca-certificates curl software-properties-common [Install packages to allow apt to use a repository over HTTPS]
+3.$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - [Add Docker’s official GPG key]
+4.$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" [ command to set up the stable repository.]
+Install steps:
+1.$sudo apt-get update  [Update the apt package index]
+2.$sudo apt-get install docker-ce [Install the latest version of Docker CE]
+3.$apt-cache madison docker-ce (list versions) [List the versions available in your repo]
+4.$sudo apt-get install docker-ce=<VERSION> [Install a specific version by its fully qualified package name]
+5.$sudo docker run hello-world [Docker CE is installed correctly]
+
+Docker:-
+Checking docker version
+$docker --version
+
+Checking images
+$docker images
+
+Searching image like apache
+$docker search apache
+
+Pulling any image from docker hub
+$docker pull httpd
+
+Listing containers:
+docker ps -a
+
+Getting into container:-
+docker exec -it c161e81dda56 /bin/bash
+
+Unistalling Docker:-
+1.Uninstall the Docker CE package:
+$ sudo apt-get purge docker-ce
+2.To delete all images, containers, and volumes:
+$ sudo rm -rf /var/lib/docker
+
+Run:-
+$ docker run -i -t ubuntu /bin/bash
