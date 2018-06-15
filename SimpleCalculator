@@ -1,14 +1,9 @@
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
-
 import org.openqa.selenium.*;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -64,10 +59,13 @@ public class SimpleCalculator {
        } else {
           System.out.println(" The Result is Fail");
        }*/
+     in.close();
     }
     
     @AfterTest
     public void terminatetest() {
-       driver.close();
+     
+    	driver.close();
+       
     }
 }
